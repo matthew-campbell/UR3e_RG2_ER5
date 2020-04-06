@@ -12,6 +12,8 @@
 
   <xacro:include filename="$(find UR3e_RG2_ER5_description)/urdf/er5.urdf.xacro" />
 
+  <xacro:include filename="$(find UR3e_RG2_ER5_description)/urdf/kinect_camera.urdf.xacro"/>
+  <!-- <xacro:include filename="$(find UR3e_RG2_ER5_description)/urdf/camera.urdf.xacro"/>  -->
 
   <!-- arm -->
   <xacro:ur3e_robot prefix="" joint_limited="true"
@@ -43,7 +45,7 @@
   </joint>
 
   <link name="world" />
-
+  <xacro:camera_deep parent="world" prefix=""/>
   <joint name="world_joint" type="fixed">
     <parent link="world" />
     <child link = "er5_body_link" />
