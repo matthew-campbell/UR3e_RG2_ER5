@@ -12,6 +12,7 @@
       <child link="${prefix}rg2_body_link"/>
     </joint>
     <link name="${prefix}rg2_body_link">
+
       <visual>
         <origin rpy="0 1.57 0" xyz="0.051 0.0085 0.0015"/>
         <geometry>
@@ -21,12 +22,15 @@
           <color rgba="1.0 1.0 1.0 1.0"/>
         </material>
       </visual>
+
+
       <collision>
-        <origin rpy="0 1.57 0" xyz="0.1 0.0085 0.0"/>
+        <origin rpy="0 1.57 0" xyz="0.1 0.0 0.0"/>
         <geometry>
-          <cylinder length="0.05" radius="0.03"/>
+          <cylinder length="0.2" radius="0.05"/>
         </geometry>
       </collision>
+
       <inertial>
         <mass value="1"/>
         <inertia ixx="1" ixy="0.0" ixz="0.0" iyy="1" iyz="0.0" izz="1"/>

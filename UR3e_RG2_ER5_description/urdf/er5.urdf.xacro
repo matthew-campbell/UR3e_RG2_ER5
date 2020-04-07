@@ -5,6 +5,7 @@
   <xacro:macro name="er5" params="prefix">
     
     <link name="${prefix}er5_body_link">
+
       <visual>
         <origin rpy="1.57 0 3.14" xyz="0.53 -0.27 -1.05"/>
         <geometry>
@@ -14,6 +15,15 @@
           <color rgba="1.0 1.0 1.0 1.0"/>
         </material>
       </visual>
+
+      <collision>
+<!--        <origin rpy="1.57 0 3.14" xyz="0.53 -0.27 -1.05"/> -->
+        <origin rpy="0 0 0" xyz="-0.12 0.0 -.3"/>
+        <geometry>
+          <cylinder length="0.6" radius="0.2"/>
+        </geometry>
+      </collision>
+
       <collision>
 <!--        <origin rpy="1.57 0 3.14" xyz="0.53 -0.27 -1.05"/> -->
         <origin rpy="0 0 0" xyz=".30 0 -.625"/>
@@ -22,6 +32,7 @@
 <!--          <mesh filename="package://UR3e_RG2_ER5_description/meshes/er5_base/er5_.STL" scale="0.001 0.001 0.001"/>-->
         </geometry>
       </collision>
+
       <inertial>
         <mass value="1"/>
         <inertia ixx="1" ixy="0.0" ixz="0.0" iyy="1" iyz="0.0" izz="1"/>
