@@ -37,10 +37,19 @@
       </inertial>
     </link>
 
-    <joint name="rg2_eef_joint" type="fixed">
+    <!--joint name="rg2_eef_joint" type="fixed">
       <origin rpy="0 0 0" xyz="0.195 0.0 0.0"/>
       <parent link="rg2_body_link"/>
       <child link="rg2_eef_link"/>
+    </joint>
+    <link name="rg2_eef_link"/-->
+
+    <joint name="gripper_joint" type="revolute">
+      <origin rpy="0 0 0" xyz="0.195 0.0 0.0"/>
+      <parent link="rg2_body_link"/>
+      <child link="rg2_eef_link"/>
+      <axis  xyz="1 0 0" />
+      <limit effort="1" lower="-1" upper="1" velocity="1"/>
     </joint>
     <link name="rg2_eef_link"/>
 
