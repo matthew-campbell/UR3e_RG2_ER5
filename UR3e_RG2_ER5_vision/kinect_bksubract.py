@@ -3,17 +3,13 @@ import rospy
 import time
 from sensor_msgs.msg import Image
 
-from itertools import product
-import scipy.stats
-from scipy.sparse import coo_matrix, dia_matrix
-from scipy.sparse import linalg
-#from skimage import io
 import time
 
 import cv2
 import numpy as np
 import sys
 import math
+
 #from kinect_smoothing import HoleFilling_Filter, Denoising_Filter
 from cv_bridge import CvBridge, CvBridgeError
 bridge = CvBridge()
@@ -44,34 +40,17 @@ def callbackDepth(data):
 	cv2.normalize(Depth_image2, Depth_image2, 0, 1, cv2.NORM_MINMAX)
 	Depth_image2 = Depth_image2 * 255.0
 	Depth_image = np.array(Depth_image2, dtype=np.uint8)
-	#Depth_image = Depth_image * 2
-	#Depth_image = cv2.fromarray(Depth_image)
-	#for r in xrange(row):
-    	#	for c in xrange(col):
-	#		px = Depth_image[r][c]
-	#		if math.isnan(px):
-	#			Depth_image[r][c] = 1.0
-	#print(Depth_image[91][91])
-	#if not Depth_image[91][91]:
-	#	print("Its equal to false")
 	flag    =   1
 	
 def callbackRGB(data):
 	global RGB_image
 	RGB_image = bridge.imgmsg_to_cv2(data, data.encoding)
 
-# print(cv_image)
-# print(image.encoding)
-# (rows, cols, channels) = cv_image.shape
-# new_image = cv_image
-# return cv_image
-# cv2.waitKey(3	while(1):)
-#cv2.meanStdDev
 
 if __name__ == '__main__':
 
 	#hole_filter = HoleFilling_Filter(flag='min')
-	rospy.init_node('Backgroun_Subtract')
+	rospy.init_node('background_subtract')
 	rospy.Subscriber('/kinect2/qhd/image_color', Image, callbackRGB)
 	rospy.Subscriber('/kinect2/sd/image_depth', Image, callbackDepth)
 	PubDepthImg = rospy.Publisher('depth_image_norm', Image)
@@ -86,7 +65,6 @@ if __name__ == '__main__':
 	while RGB_image is None:
 		print("Waiting for color image")
 		r.sleep()
-	#first_frame = cv2.imread('background_front.jpg',0)
 
 	histry = 10
 	fgbg = cv2.createBackgroundSubtractorMOG2(history = histry, detectShadows = False)
@@ -98,15 +76,13 @@ if __name__ == '__main__':
 		#Depth_image = fill_depth_colorization(RGB_image, Depth_image)
 		fgmask = fgbg.apply(Depth_image)
 
-		#lower_black = np.array(126)
-		#upper_black = np.array(130)
 	while True:
 		#Depth_image = fill_depth_colorization(RGB_image, Depth_image)
-		fgmask = fgbg.apply(Depth_image, learningRate = 0)
+		fgmask = fgbg.apply(Depth_image, learningRate = 0) 
 		#fgmaskGr = cv2.inRange(fgmask, lower_black, upper_black)
 		#fgmask = cv2.inRange(fgmask, 254, 1)
-				
-		cv2.imshow("Color Kinect", RGB_image)
+		#fgmask1 = np.array(fgmask, dtype=np.uint8)		
+		#cv2.imshow("Color Kinect", RGB_image)
 		#cv2.imshow("Depth Kinect", Depth_image)
 		#cv2.imshow("DepthSubtract", fgmask)
 		#cv2.imshow("DepthSubtractGR", fgmaskGr)
@@ -114,9 +90,10 @@ if __name__ == '__main__':
 		bksub_message = bridge.cv2_to_imgmsg(fgmask, encoding="passthrough")
 		try:		
 			PubDepthImg.publish(depth_message)
-			PubBksubImg.publish(Bksub_message)
+			PubBksubImg.publish(bksub_message)
 		except:
-			print("Not Published")
+			#print("Not Published")
+			None
 		
 		if cv2.waitKey(1) == 27:
 			break  # esc to quit
