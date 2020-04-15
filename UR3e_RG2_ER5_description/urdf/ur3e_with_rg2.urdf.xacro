@@ -36,10 +36,11 @@
   </joint>
 
   <joint name="ur3e_to_gripper" type="fixed">
-    <origin xyz="0 0 0.0" rpy="0 0 0"/>
+    <origin xyz="0 0 0.0" rpy="0 ${-pi/2} 0"/>
     <parent link="tool0"/>
     <parent link="wrist_3_link" />
-    <child link="gripper_extender_link"/>
+    <!--child link="gripper_extender_link"/-->
+    <child link="rg2_body_link"/>
   </joint>
 
   <link name="world" />

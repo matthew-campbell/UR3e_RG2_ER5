@@ -4,13 +4,13 @@
 <robot name="rg2" xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:macro name="rg2" params="prefix">
     
-    <link name="gripper_extender_link" />
-    <!-- rg2 joint -->
+    <!--link name="gripper_extender_link" />
+
     <joint name="rg2_joint" type="fixed">
       <origin rpy="0 -1.57 0" xyz="0 0 0"/>
       <parent link="${prefix}gripper_extender_link"/>
       <child link="${prefix}rg2_body_link"/>
-    </joint>
+    </joint-->
     <link name="${prefix}rg2_body_link">
 
       <visual>
@@ -46,12 +46,23 @@
 
     <joint name="gripper_joint" type="revolute">
       <origin rpy="0 0 0" xyz="0.195 0.0 0.0"/>
+      <axis  xyz="0 0 1" />
+      <limit effort="1000" lower="0" upper=".548" velocity="0.5"/>
       <parent link="rg2_body_link"/>
       <child link="rg2_eef_link"/>
-      <axis  xyz="1 0 0" />
-      <limit effort="1" lower="-1" upper="1" velocity="1"/>
+      
     </joint>
     <link name="rg2_eef_link"/>
+
+    <transmission name="gripper_joint_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="gripper_joint">
+        <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="gripper_joint_motor">
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+    </transmission>
 
   </xacro:macro>
 </robot>
