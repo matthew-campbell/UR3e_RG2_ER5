@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from collections import Counter
 import rospy
 import time
@@ -18,6 +19,7 @@ RGB_image = None
 flag = None
 cheight = None
 cwidth = None
+pName = "kinect_bksubtract: "
 
 
 def callbackDepth(data):
@@ -53,24 +55,24 @@ if __name__ == '__main__':
 	rospy.init_node('background_subtract')
 	rospy.Subscriber('/kinect2/qhd/image_color', Image, callbackRGB)
 	rospy.Subscriber('/kinect2/sd/image_depth', Image, callbackDepth)
-	PubDepthImg = rospy.Publisher('depth_image_norm', Image)
-	PubBksubImg = rospy.Publisher('bksub_image', Image)
+	PubDepthImg = rospy.Publisher('depth_image_norm', Image, queue_size=10)
+	PubBksubImg = rospy.Publisher('bksub_image', Image, queue_size=10)
 	
 	#rospy.Subscriber('/kinect2/qhd/image_depth_rect', Image, callbackDepth)
 	rate = 100
 	r = rospy.Rate(rate)
 	while Depth_image is None:
-		print("Waiting for depth image")
+		print(pName + "Waiting for depth image")
 		r.sleep()
 	while RGB_image is None:
-		print("Waiting for color image")
+		print(pName +"Waiting for color image")
 		r.sleep()
 
 	histry = 10
 	fgbg = cv2.createBackgroundSubtractorMOG2(history = histry, detectShadows = False)
 	for x in range(histry):
 		flag = 0
-		print("Sample " + str(x) + "!")
+		print(pName + "Sample " + str(x) + "!")
 		while flag != 1:
 			None
 		#Depth_image = fill_depth_colorization(RGB_image, Depth_image)
