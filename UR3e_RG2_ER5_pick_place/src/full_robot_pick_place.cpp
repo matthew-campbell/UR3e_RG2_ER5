@@ -17,8 +17,8 @@ void openGripper(trajectory_msgs::JointTrajectory& posture)
   // BEGIN_SUB_TUTORIAL open_gripper
   /* Add both finger joints of panda robot. */
   posture.joint_names.resize(1);
-  posture.joint_names[0] = "rg2_eef_joint";
-  posture.joint_names[0] = "wrist_3_joint";
+  posture.joint_names[0] = "gripper_joint";
+  //posture.joint_names[0] = "wrist_3_joint";
 
   /* Set them as open, wide enough for the object to fit. */
   posture.points.resize(1);
@@ -33,8 +33,8 @@ void closedGripper(trajectory_msgs::JointTrajectory& posture)
   // BEGIN_SUB_TUTORIAL closed_gripper
   /* Add both finger joints of panda robot. */
   posture.joint_names.resize(1);
-  posture.joint_names[0] = "rg2_eef_joint";
-  posture.joint_names[0] = "wrist_3_joint";
+  posture.joint_names[0] = "gripper_joint";
+  //posture.joint_names[0] = "wrist_3_joint";
 
   /* Set them as closed. */
   posture.points.resize(1);
