@@ -23,7 +23,7 @@ void openGripper(trajectory_msgs::JointTrajectory& posture)
   /* Set them as open, wide enough for the object to fit. */
   posture.points.resize(1);
   posture.points[0].positions.resize(1);
-  posture.points[0].positions[0] = 0.0;
+  posture.points[0].positions[0] = 2.0;
   posture.points[0].time_from_start = ros::Duration(0.5);
   // END_SUB_TUTORIAL
 }
@@ -39,7 +39,7 @@ void closedGripper(trajectory_msgs::JointTrajectory& posture)
   /* Set them as closed. */
   posture.points.resize(1);
   posture.points[0].positions.resize(1);
-  posture.points[0].positions[0] = 0.00;
+  posture.points[0].positions[0] = 0.1;
   posture.points[0].time_from_start = ros::Duration(0.5);
   // END_SUB_TUTORIAL
 }
@@ -86,6 +86,7 @@ void pick(moveit::planning_interface::MoveGroupInterface& move_group)
   grasps[0].post_grasp_retreat.min_distance = .001; //0.01;
   grasps[0].post_grasp_retreat.desired_distance = .045; //0.025;
 
+
   // Setting posture of eef before grasp
   // +++++++++++++++++++++++++++++++++++
   openGripper(grasps[0].pre_grasp_posture);
@@ -122,7 +123,7 @@ void place(moveit::planning_interface::MoveGroupInterface& group)
   // And orientation is now the object's, not the joint
   place_location[0].place_pose.pose.position.x = 0.3;
   place_location[0].place_pose.pose.position.y = 0.35;
-  place_location[0].place_pose.pose.position.z = 0.6;
+  place_location[0].place_pose.pose.position.z = 0.6; 
   place_location[0].place_pose.pose.orientation.x = 0.0;
   place_location[0].place_pose.pose.orientation.y = 0.0;
   place_location[0].place_pose.pose.orientation.z = 0.0;
@@ -259,45 +260,21 @@ int main(int argc, char** argv)
   // Wait a bit for ROS things to initialize
   ros::WallDuration(1.0).sleep();
 
-  pick(group);
+  //pick(group);
 
-  ros::WallDuration(1.0).sleep();
+  //ros::WallDuration(1.0).sleep();
 
-  place(group);
-
-  // place grasp pose
-  /*geometry_msgs::Pose target_pose;
-  target_pose.position.x = 0.25;
-  target_pose.position.y = .35;
-  target_pose.position.z = 0.95;
-  target_pose.orientation.x = 0.5;
-  target_pose.orientation.y = 0.5;
-  target_pose.orientation.z = -0.5;
-  target_pose.orientation.w = 0.5;*/
+  //place(group);
   
+  std::vector<moveit_msgs::Grasp> grasps;
+  grasps.resize(1);
 
-  // pick grasp pose
-  /*geometry_msgs::Pose target_pose;
-  target_pose.position.x = 0.4;
-  target_pose.position.y = .1;
-  target_pose.position.z = 0.95;
-  target_pose.orientation.x = 0.5;
-  target_pose.orientation.y = 0.5;
-  target_pose.orientation.z = -0.5;
-  target_pose.orientation.w = 0.5; */
+  openGripper(grasps[0].pre_grasp_posture);
+  
+  ros::WallDuration(5.0).sleep();
 
-  //target_pose.position.x = 0.25;
-  //target_pose.position.y = -0.15;
-  //target_pose.position.z = 0.75;
-  //target_pose.orientation.x = 0.7071068;
-  //target_pose.orientation.y = 0.7071068;
-  //target_pose.orientation.z = 0;
-  //target_pose.orientation.w = 0;
-  //group.setPoseTarget(target_pose);
-  //moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-  //group.plan(my_plan);
-  //sleep(5.0);
- // group.move(); 
+  closedGripper(grasps[0].pre_grasp_posture);
+  
 
   ros::waitForShutdown();
   return 0;

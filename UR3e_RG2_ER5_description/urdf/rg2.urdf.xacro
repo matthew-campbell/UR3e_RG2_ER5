@@ -47,7 +47,7 @@
     <joint name="gripper_joint" type="revolute">
       <origin rpy="0 0 0" xyz="0.195 0.0 0.0"/>
       <axis  xyz="0 0 1" />
-      <limit effort="1000" lower="0" upper=".548" velocity="0.5"/>
+      <limit effort="1000" lower="0" upper="3.14" velocity="3.14"/>
       <parent link="rg2_body_link"/>
       <child link="rg2_eef_link"/>
   
