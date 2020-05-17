@@ -1,4 +1,12 @@
 #!/usr/bin/env python
+
+
+"""
+This program takes the background subtracted image and runs a blob detection on it.
+It then finds the minimum sphere for the blob and relates it into 3D space as a marker.
+
+"""
+
 from collections import Counter
 import rospy
 import time
@@ -15,7 +23,7 @@ import tf
 
 import random as rng
 
-#from kinect_smoothing import HoleFilling_Filter, Denoising_Filter
+
 from cv_bridge import CvBridge, CvBridgeError
 bridge = CvBridge()
 Depth_image = None
@@ -27,27 +35,32 @@ cheight = None
 cwidth = None
 pName = "image_segmentation: "
 
+#-- Converts ROS image into openc image	
 def callbackPoints(data):
 	global Points
 	Points = data
 
+#-- Converts ROS image into openc image	
 def callbackDepth(data):
 	global Depth_image
 	global flag
 	Depth_image2 = np.asarray(bridge.imgmsg_to_cv2(data, 'passthrough'))
 	Depth_image = np.nan_to_num(Depth_image2)
 
+#-- Converts ROS image into openc image	
 def callbackBKSub(data):
 	global Depth_image
 	global Bksub_image
 	global flag
 	Bksub_image = np.asarray(bridge.imgmsg_to_cv2(data, 'passthrough'))
 	flag    =   1
-	
+
+#-- Converts ROS image into openc image	
 def callbackRGB(data):
 	global RGB_image
 	RGB_image = bridge.imgmsg_to_cv2(data, data.encoding)
 
+#-- Converts pixels info into depth info using kinect intrinsics
 def getXYZfromUVD(x1,y1,depth):
 	fx = 554.254691191187
 	fy = 554.254691191187
