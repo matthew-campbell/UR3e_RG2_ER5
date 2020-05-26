@@ -111,7 +111,7 @@ if __name__ == '__main__':
 		cv2.imshow(pName + "Depth Kinect", Depth_image)
 
 		ret,thresh = cv2.threshold(Bksub_image,127,255,0)
-		# find contours in the binary image
+		#-- find contours in the binary image
 		im2, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 		
 		centers = [None]*len(contours)
@@ -125,7 +125,7 @@ if __name__ == '__main__':
 		for i in range(len(contours)):
 			#print("The min_depth is " + str(min_depth[0]))
 			mu[i] = cv2.moments(contours[i])
-			# Get the mass centers
+			#-- Get the mass centers
 			centers[i], radius[i] = cv2.minEnclosingCircle(contours[i])
 			
 			for j in range(len(contours[i])):
@@ -142,7 +142,7 @@ if __name__ == '__main__':
 
 			mid_depth[i] = ((max_depth[i] - min_depth[i])/2.0)
 
-			mc[i] = (mu[i]['m10'] / (mu[i]['m00'] + 1e-5), mu[i]['m01'] / (mu[i]['m00'] + 1e-5)) # add 1e-5 to avoid division by zero
+			mc[i] = (mu[i]['m10'] / (mu[i]['m00'] + 1e-5), mu[i]['m01'] / (mu[i]['m00'] + 1e-5)) #-- add 1e-5 to avoid division by zero
 			
 			points3d = getXYZfromUVD(int(mc[i][0]),int(mc[i][1]),mid_depth[i])
 			
