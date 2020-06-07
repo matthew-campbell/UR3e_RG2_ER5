@@ -127,12 +127,14 @@ if __name__ == '__main__':
 			mu[i] = cv2.moments(contours[i])
 			#-- Get the mass centers
 			centers[i], radius[i] = cv2.minEnclosingCircle(contours[i])
-			
+			flag_1 = 0
 			for j in range(len(contours[i])):
 				try:
 					x = Depth_image[contours[i][j][0][0],contours[i][j][0][1]]
+					flag_1 = 1
 					#print("J is"+ str(j) + "x is:" + str(x))
 				except:
+					flag_1 = 0
 					None
 	
 				if x <= min_depth[i] and not 0:
@@ -144,16 +146,17 @@ if __name__ == '__main__':
 
 			mc[i] = (mu[i]['m10'] / (mu[i]['m00'] + 1e-5), mu[i]['m01'] / (mu[i]['m00'] + 1e-5)) #-- add 1e-5 to avoid division by zero
 			
-			points3d = getXYZfromUVD(int(mc[i][0]),int(mc[i][1]),mid_depth[i])
+			if(flag):
+				points3d[i] = list(getXYZfromUVD(int(mc[i][0]),int(mc[i][1]),mid_depth[i]))
 			
-			points3d[i][0] = .001 - points3d[i][0]
-			points3d[i][1] = 1.0 - points3d[i][1]
-			points3d[i][2] = -.45 - points3d[i][2]
-			print(points3d)
+				points3d[i][0] = .001 - points3d[i][0]
+				points3d[i][1] = 1.0 - points3d[i][1]
+				points3d[i][2] = -.45 - points3d[i][2]
+				print(points3d[i])
 
-			cv2.circle(RGB_image, (int(mc[i][0]), int(mc[i][1])), int(radius[i]), color, 2)
-			cv2.drawContours(RGB_image, contours, i, color, 2)
-			cv2.circle(RGB_image, (int(mc[i][0]), int(mc[i][1])), 4, color, -1)
+				cv2.circle(RGB_image, (int(mc[i][0]), int(mc[i][1])), int(radius[i]), color, 2)
+				cv2.drawContours(RGB_image, contours, i, color, 2)
+				cv2.circle(RGB_image, (int(mc[i][0]), int(mc[i][1])), 4, color, -1)
 
 		#depth_message = bridge.cv2_to_imgmsg(Depth_image, encoding="passthrough")
 		try:		
