@@ -14,19 +14,38 @@ find_package(catkin REQUIRED
              pluginlib
              cmake_modules
              geometric_shapes
+             gazebo
+             message_generation
+             cmake_modules
 )
 
 find_package(Boost REQUIRED system filesystem date_time thread)
 
+add_message_files(
+   FILES
+   object_sphere.msg
+ )
+
+generate_messages(
+   DEPENDENCIES
+   std_msgs
+   geometry_msgs
+ )
+
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES pr2_moveit_tutorials
-  CATKIN_DEPENDS 
+  CATKIN_DEPENDS
     moveit_core
     moveit_ros_planning_interface
     interactive_markers
+    message_runtime
 )
 find_package(Eigen REQUIRED)
+find_package(TinyXML2 REQUIRED)
+
+
+
 
 ###########
 ## Build ##

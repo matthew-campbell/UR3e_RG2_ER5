@@ -1,5 +1,5 @@
-<robot name="object">
-  <link name="object">
+<robot name="sphere">
+  <link name="sphere">
     <inertial>
       <origin xyz="0.35 0 0" />
       <mass value="1.0" />
@@ -8,17 +8,17 @@
     <visual>
       <origin xyz="0.35 0 0.65"/>
       <geometry>
-        <box size="0.02 0.02 0.2" />
+        <sphere radius=1 />
       </geometry>
     </visual>
     <collision>
       <origin xyz="0.35 0 0.65"/>
       <geometry>
-        <box size="0.02 0.02 0.2" />
+        <sphere radius=1 />
       </geometry>
     </collision>
   </link>
-  <gazebo reference="object">
+  <gazebo reference="sphere">
     <material>Gazebo/Green</material>
   </gazebo>
 </robot>

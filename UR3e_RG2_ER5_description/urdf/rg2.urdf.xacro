@@ -3,7 +3,7 @@
 
 <robot name="rg2" xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:macro name="rg2" params="prefix">
-    
+
     <!--link name="gripper_extender_link" />
 
     <joint name="rg2_joint" type="fixed">
@@ -27,7 +27,7 @@
       <collision>
         <origin rpy="0 1.57 0" xyz="0.1 0.0 0.0"/>
         <geometry>
-          <cylinder length="0.2" radius="0.05"/>
+          <cylinder length="0.1" radius="0.05"/>
         </geometry>
       </collision>
 
@@ -50,7 +50,7 @@
       <limit effort="1000" lower="0" upper="3.14" velocity="3.14"/>
       <parent link="rg2_body_link"/>
       <child link="rg2_eef_link"/>
-  
+
     </joint>
 
     <link name="rg2_eef_link">
