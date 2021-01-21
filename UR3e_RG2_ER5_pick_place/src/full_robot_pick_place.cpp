@@ -1,6 +1,6 @@
 // Subs to topic _____ to recieve information about a percieved object from the camera.
 // Recieves a msg of type object_sphere with a name, pose, and radius. The object
-// is always assumed to be a sphere for now. The program will generate the sphere
+// is always assumed to be a sphere for now. The program will spawn the sphere
 // in Gazebo and check to see whether the sphere is grabable by means of a bounding
 // box. If it is, then the robot will do a pick and place function using commands sent
 // to Moveit!.
@@ -14,6 +14,8 @@ using namespace std;
 #include <ros/ros.h>
 #include <ros/package.h>
 #include <sstream>
+
+//Gazebo
 #include <gazebo_msgs/SpawnModel.h>
 #include <gazebo_msgs/SpawnModelRequest.h>
 #include <gazebo_msgs/SpawnModelResponse.h>
@@ -34,7 +36,7 @@ using namespace std;
 
 // Global Variables for storing Callback information
 geometry_msgs::Pose sphere_pose;
-int once = 1;
+int objectCheck = 0;  //changed through the callback function: 1 means there is an object queued, 0 means no object
 double sphere_xyz[3];
 double sphere_radius;
 string sphere_name;
@@ -52,6 +54,9 @@ void objectCallback (const UR3e_RG2_ER5_pick_place::object_sphere::ConstPtr& msg
   sphere_pose = msg->pose;
   sphere_radius = msg->radius;
   sphere_name = msg->name;
+
+  objectCheck = 1;  //Object in queue
+
   ROS_INFO ("looping");
 
 
@@ -81,8 +86,7 @@ void objectCallback (const UR3e_RG2_ER5_pick_place::object_sphere::ConstPtr& msg
 
 int BndBox_Check (double msg[3])
 {
-    //Check to see whether an onject is within the defined bounding box
-    //Either return the object or nothing at all
+  //Check to see whether an onject is within the defined bounding box
 
   //Define a bounding box
   double bndBoxOrigin[3] = {0, -0.1, 0.65};   //{x,y,z} origin
@@ -202,8 +206,8 @@ void pick(moveit::planning_interface::MoveGroupInterface& move_group)
   // Set support surface as table1.
   move_group.setSupportSurfaceName("base"); //commented
   // Call pick to pick up the object using the grasps given
-  move_group.pick(sphere_name, grasps);
 
+  move_group.pick(sphere_name, grasps);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -264,14 +268,14 @@ void place(moveit::planning_interface::MoveGroupInterface& group)
 
 ////////////////////////////////////////////////////////////////////////////////////
 
-void addCollisionObjects(moveit::planning_interface::PlanningSceneInterface& planning_scene_interface)
+void addCollisionObjects_Tables(moveit::planning_interface::PlanningSceneInterface& planning_scene_interface)
 {
 
   // Creating Environment
   // ^^^^^^^^^^^^^^^^^^^^
   // Create vector to hold 3 collision objects.
   std::vector<moveit_msgs::CollisionObject> collision_objects;
-  collision_objects.resize(3);
+  collision_objects.resize(2);
 
   // Add the first table where we will be placing the cube.
   collision_objects[0].id = "table1";
@@ -314,24 +318,57 @@ void addCollisionObjects(moveit::planning_interface::PlanningSceneInterface& pla
 
   collision_objects[1].operation = collision_objects[1].ADD;
 
-
+/*
   // Define the object that we will be manipulating
   collision_objects[2].header.frame_id = "world";
   collision_objects[2].id = sphere_name;
 
-  /* Define the primitive and its dimensions. */
+  // Define the primitive and its dimensions.
   collision_objects[2].primitives.resize(1);
   collision_objects[2].primitives[0].type = collision_objects[1].primitives[0].SPHERE;
   collision_objects[2].primitives[0].dimensions.resize(1);
   collision_objects[2].primitives[0].dimensions[0] = sphere_radius;
 
-  /* Define the pose of the object. */
+  // Define the pose of the object.
   collision_objects[2].primitive_poses.resize(1);
   collision_objects[2].primitive_poses[0].position.x = sphere_xyz[0];
   collision_objects[2].primitive_poses[0].position.y = sphere_xyz[1];
   collision_objects[2].primitive_poses[0].position.z = 0.6;
 
   collision_objects[2].operation = collision_objects[2].ADD;
+*/
+
+  planning_scene_interface.applyCollisionObjects(collision_objects);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void addCollisionObjects_Sphere(moveit::planning_interface::PlanningSceneInterface& planning_scene_interface, int numSpheres)
+{
+  // Creating Environment
+  // ^^^^^^^^^^^^^^^^^^^^
+  // Create vector to hold all previous collision objects plus one.
+  int elementLocation = numSpheres + 2; //The 2 is avoid writting over the two tables
+  std::vector<moveit_msgs::CollisionObject> collision_objects;
+  collision_objects.resize(elementLocation + 1);  //resize the array to hold the tables and spheres
+
+  // Define the object that we will be manipulating
+  collision_objects[elementLocation].header.frame_id = "world";
+  collision_objects[elementLocation].id = sphere_name;
+
+  // Define the primitive and its dimensions.
+  collision_objects[elementLocation].primitives.resize(1);
+  collision_objects[elementLocation].primitives[0].type = collision_objects[1].primitives[0].SPHERE;
+  collision_objects[elementLocation].primitives[0].dimensions.resize(1);
+  collision_objects[elementLocation].primitives[0].dimensions[0] = sphere_radius;
+
+  // Define the pose of the object.
+  collision_objects[elementLocation].primitive_poses.resize(1);
+  collision_objects[elementLocation].primitive_poses[0].position.x = sphere_xyz[0];
+  collision_objects[elementLocation].primitive_poses[0].position.y = sphere_xyz[1];
+  collision_objects[elementLocation].primitive_poses[0].position.z = 0.6;
+
+  collision_objects[elementLocation].operation = collision_objects[elementLocation].ADD;
 
   planning_scene_interface.applyCollisionObjects(collision_objects);
 }
@@ -351,52 +388,59 @@ int main(int argc, char** argv)
   moveit::planning_interface::MoveGroupInterface group("manipulator");
   group.setPlanningTime(60.0);
 
-  addCollisionObjects(planning_scene_interface);
+  addCollisionObjects_Tables(planning_scene_interface);  //add tables as collision objects
+
+  int numSpheres = 0; //A variable to hold the number of spawned spheres, used for addCollisionObjects_Sphere()
 
 
   while (ros::ok()){
-//    ROS_INFO ("%f %f %f %f", sphere[0], sphere[1], sphere[2], sphere[3]);
-    if (BndBox_Check(sphere_xyz)){
-      if ((sphere_radius < 1.5)&&(sphere_radius != 0)){   //Checks that the radius doesn't exceed a maximum value
-        //Need to call a function to put the radius in a generic xml file
-        string origin_xyz = "0 0 0";
-        string sphere_urdf = "<robot name=\"sphere\"><link name=\"sphere\"><inertial><origin xyz=\"" + origin_xyz + "\" /><mass value=\"1.0\" /><inertia  ixx=\"1.0\" ixy=\"0.0\"  ixz=\"0.0\"  iyy=\"1.0\"  iyz=\"0.0\"  izz=\"1.0\" /></inertial><visual><origin xyz=\"" + origin_xyz + "\"/><geometry><sphere radius=\"" + to_string(sphere_radius) + "\" /></geometry></visual><collision><origin xyz=\"" + origin_xyz + "\"/><geometry><sphere radius=\"" + to_string(sphere_radius) + "\" /></geometry></collision></link><gazebo reference= \"sphere\"><material>Gazebo/Green</material></gazebo></robot>";
-//        printf("%s\n",sphere_urdf.c_str());
-        ROS_INFO("%s", sphere_urdf.c_str());
+  //Loops while ros is still running
 
-        srv.request.model_name = sphere_name;
-        srv.request.model_xml = sphere_urdf;
-        srv.request.robot_namespace = "sphere_spawner";
-        srv.request.initial_pose = sphere_pose;
-        srv.request.reference_frame = "world";
+    ros::spinOnce(); //take the callback
+    if (objectCheck){
+      objectCheck = 0;  //reset for next object
+      if (BndBox_Check(sphere_xyz)){
+        if ((sphere_radius < 1.5)&&(sphere_radius > 0)){   //Checks that the radius doesn't exceed a maximum value
+          string origin_xyz = "0 0 0";  //Probably want to leave this alone unless wanting to change
+          string sphere_urdf = "<robot name=\"sphere\"><link name=\"sphere\"><inertial><origin xyz=\"" + origin_xyz + "\" /><mass value=\"1.0\" /><inertia  ixx=\"1.0\" ixy=\"0.0\"  ixz=\"0.0\"  iyy=\"1.0\"  iyz=\"0.0\"  izz=\"1.0\" /></inertial><visual><origin xyz=\"" + origin_xyz + "\"/><geometry><sphere radius=\"" + to_string(sphere_radius) + "\" /></geometry></visual><collision><origin xyz=\"" + origin_xyz + "\"/><geometry><sphere radius=\"" + to_string(sphere_radius) + "\" /></geometry></collision></link><gazebo reference= \"sphere\"><material>Gazebo/Green</material></gazebo></robot>";
+          ROS_INFO("%s", sphere_urdf.c_str());
 
-        if (once){
-          if (client.call(srv)){
-          once = 0;
-          }
+          //Send a request to gazebo to spawn a sphere in the world environment
+          srv.request.model_name = sphere_name;
+          srv.request.model_xml = sphere_urdf;
+          srv.request.robot_namespace = "sphere_spawner";
+          srv.request.initial_pose = sphere_pose;
+          srv.request.reference_frame = "world";
+
+          //call the service to spawn a sphere
+          if (client.call(srv));
           else{
             ROS_WARN("didn't work!!");
           }
+
+          //Display relevant info about the service request
           ROS_INFO("Result: %s, code %u",srv.response.status_message.c_str(), srv.response.success);
-//          return 0;
+
+          //add the sphere as a collision object for Moveit
+          addCollisionObjects_Sphere(planning_scene_interface, numSpheres);
+          numSpheres++; //get ready for the next sphere
+
+          ros::WallDuration(1.0).sleep(); //give a moment to do things
+
+          pick(group);  //pick function
+          ROS_INFO("Picked");
+          ros::WallDuration(10.0).sleep(); //give a moment to do things
+
+          place(group); //place function
+          ROS_INFO("Placed");
+          ros::WallDuration(1.0).sleep(); //give a moment to do things
+
         }
-        ros::WallDuration(1.0).sleep();
-
-        pick(group);
-        ROS_INFO("Picked");
-        ros::WallDuration(1.0).sleep();
-
-        place(group);
-        ROS_INFO("Placed");
-        ros::WallDuration(1.0).sleep();
-
-      }
-      else{   //sphere too big to grasp
-        ROS_WARN ("Sphere is too large to grasp :(");
+        else{   //sphere too big to grasp
+          ROS_WARN ("Sphere is too large to grasp :(");
+        }
       }
     }
-    ros::spinOnce();
   }
-
-  return 0;
+  return 0; //EOF
 }

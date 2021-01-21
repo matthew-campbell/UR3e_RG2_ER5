@@ -14,7 +14,7 @@ find_package(catkin REQUIRED
              pluginlib
              cmake_modules
              geometric_shapes
-             gazebo
+             gazebo_msgs
              message_generation
              cmake_modules
 )
