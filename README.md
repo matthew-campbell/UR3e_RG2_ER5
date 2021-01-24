@@ -1,7 +1,7 @@
 ## UR3e_RG2_ER5 Arm Manipulation
 This collection of ROS packages (Noetic) is intended for the manipulation and control of the universal_robotics UR3e tabletop robot arm. Currently these packages are configured to run in simulation and eventually will be modified to allow for real hardware manipulation.
 
-The goal of these packages are to allow for sphereical objects to be spawned in the Gazebo simulator and the UR3e robot arm carries through a pick and place sequence on the sphereical object, sorting it left or right of the arm.
+The goal of these packages are to allow for sphereical objects to be spawned in the Gazebo simulator and the UR3e robot arm carry through a pick and place sequence on the sphereical object, sorting it left or right of the arm.
 
 ### Getting Started
 Open a new terminal and launch the UR3e robot in Gazebo:
