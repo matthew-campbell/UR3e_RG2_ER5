@@ -27,4 +27,11 @@ rostopic pub /pick_place UR3e_RG2_ER5_pick_place/object_sphere '{name: "TEST1",p
 ```
 
 ### Known Issues
-Pick function within full_robot_pick_place.cpp located in UR3e_RG2_ER5_pick_place/src does not fully complete (appears to complete but does not return back to continue within main function).
+Pick function within full_robot_pick_place.cpp located in UR3e_RG2_ER5_pick_place/src does not fully complete (appears to complete but does not return back to continue within main function). Meaning it never gets to the place function.
+
+Robot arm does not go down far enough to pick the sphere. Will not find a trajectory (fails) if it tries to go any lower to pick the sphere. Maybe this feeds into the first problem?
+
+### To Do
+Allow for the caipability of placing the sphere left or right depending on what it is told to do.
+
+Fix the stated issues
