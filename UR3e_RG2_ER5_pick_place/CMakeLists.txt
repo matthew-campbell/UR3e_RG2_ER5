@@ -57,5 +57,9 @@ include_directories(${catkin_INCLUDE_DIRS})
 link_directories(${catkin_LIBRARY_DIRS})
 
 add_executable(pick_place src/full_robot_pick_place.cpp)
+add_dependencies(pick_place
+    UR3e_RG2_ER5_pick_place_generate_messages_cpp
+)
+
 target_link_libraries(pick_place ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 install(TARGETS pick_place DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
