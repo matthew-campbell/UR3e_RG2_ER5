@@ -229,9 +229,10 @@ void place(moveit::planning_interface::MoveGroupInterface& group)
 
   /* While placing it is the exact location of the center of the object. */
   // And orientation is now the object's, not the joint
-  place_location[0].place_pose.pose.position.x = 0.3;
-  place_location[0].place_pose.pose.position.y = 0.35;
-  place_location[0].place_pose.pose.position.z = 0.6;
+  place_location[0].place_pose.pose.position.x = 0.14;
+  place_location[0].place_pose.pose.position.y = -0.35;
+  place_location[0].place_pose.pose.position.z = 0.502 + sphere_radius;
+
 //  place_location[0].place_pose.pose.orientation.x = 0.0;
 //  place_location[0].place_pose.pose.orientation.y = 0.0;
 //  place_location[0].place_pose.pose.orientation.z = 0.0;
@@ -244,7 +245,7 @@ void place(moveit::planning_interface::MoveGroupInterface& group)
   /* Direction is set as negative z axis */
   place_location[0].pre_place_approach.direction.vector.z = -1.0;
   place_location[0].pre_place_approach.min_distance = 0.005;
-  place_location[0].pre_place_approach.desired_distance = 0.0115;
+  place_location[0].pre_place_approach.desired_distance = 0.025;
 
   // Setting post-grasp retreat
   // ++++++++++++++++++++++++++
@@ -253,7 +254,7 @@ void place(moveit::planning_interface::MoveGroupInterface& group)
   /* Direction is set as negative y axis */
   place_location[0].post_place_retreat.direction.vector.z = 1.0;
   place_location[0].post_place_retreat.min_distance = 0.001;
-  place_location[0].post_place_retreat.desired_distance = 0.025;
+  place_location[0].post_place_retreat.desired_distance = 0.05;
 
   // Setting posture of eef after placing object
   // +++++++++++++++++++++++++++++++++++++++++++
@@ -384,10 +385,12 @@ int main(int argc, char** argv)
   ros::ServiceClient client = nh.serviceClient<gazebo_msgs::SpawnModel>("gazebo/spawn_urdf_model");
   gazebo_msgs::SpawnModel srv;
   ros::Subscriber sub = nh.subscribe("/pick_place", 1, objectCallback);
+  ros::AsyncSpinner spinner(1);
+  spinner.start();
 
   moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
   moveit::planning_interface::MoveGroupInterface group("manipulator");
-  group.setPlanningTime(60.0);
+  group.setPlanningTime(5.0);
 
   addCollisionObjects_Tables(planning_scene_interface);  //add tables as collision objects
 
