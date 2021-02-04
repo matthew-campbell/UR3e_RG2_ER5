@@ -89,7 +89,7 @@ int BndBox_Check (double msg[3])
   //Check to see whether an onject is within the defined bounding box
 
   //Define a bounding box
-  double bndBoxOrigin[3] = {0, -0.1, 0.65};   //{x,y,z} origin
+  double bndBoxOrigin[3] = {0, -0.1, 0.5};   //{x,y,z} origin
   double bndBoxDim[3] = {0.5, 0.2, 1};   //{x,y,z} lengths; must be a positive number
   double bndBox[3] = {bndBoxOrigin[0]+bndBoxDim[0],bndBoxOrigin[1]+bndBoxDim[1],bndBoxOrigin[2]+bndBoxDim[2]};
 
@@ -169,7 +169,7 @@ void pick(moveit::planning_interface::MoveGroupInterface& move_group)
   grasps[0].grasp_pose.pose.orientation = tf2::toMsg(orientation);  //commented
   grasps[0].grasp_pose.pose.position.x = sphere_xyz[0]; //0.4
   grasps[0].grasp_pose.pose.position.y = sphere_xyz[1];  //0.1
-  grasps[0].grasp_pose.pose.position.z = 0.6;  //0.6
+  grasps[0].grasp_pose.pose.position.z = sphere_xyz[2];  //0.6
 //  grasps[0].grasp_pose.pose.orientation.x = 0.5;
 //  grasps[0].grasp_pose.pose.orientation.y = 0.5;
 //  grasps[0].grasp_pose.pose.orientation.z = -0.5;
@@ -182,16 +182,17 @@ void pick(moveit::planning_interface::MoveGroupInterface& move_group)
   /* Direction is set as negative z axis */
   grasps[0].pre_grasp_approach.direction.vector.z = -1.0;
   grasps[0].pre_grasp_approach.min_distance = .01; //0.01;
-  grasps[0].pre_grasp_approach.desired_distance = 0.0115; //0.0115;
+  grasps[0].pre_grasp_approach.desired_distance = 0.03; //0.0115;
 
   // Setting post-grasp retreat
   // ++++++++++++++++++++++++++
   /* Defined with respect to frame_id */
   grasps[0].post_grasp_retreat.direction.header.frame_id = "world";
   /* Direction is set as positive z axis */
-  grasps[0].post_grasp_retreat.direction.vector.z = 1;
-  grasps[0].post_grasp_retreat.min_distance = .001; //0.01;
+  grasps[0].post_grasp_retreat.direction.vector.z = 1.0;
+  grasps[0].post_grasp_retreat.min_distance = .005; //0.01;
   grasps[0].post_grasp_retreat.desired_distance = .045; //0.025;
+
 
 
   // Setting posture of eef before grasp
@@ -366,7 +367,7 @@ void addCollisionObjects_Sphere(moveit::planning_interface::PlanningSceneInterfa
   collision_objects[elementLocation].primitive_poses.resize(1);
   collision_objects[elementLocation].primitive_poses[0].position.x = sphere_xyz[0];
   collision_objects[elementLocation].primitive_poses[0].position.y = sphere_xyz[1];
-  collision_objects[elementLocation].primitive_poses[0].position.z = 0.6;
+  collision_objects[elementLocation].primitive_poses[0].position.z = sphere_xyz[2];
 
   collision_objects[elementLocation].operation = collision_objects[elementLocation].ADD;
 
@@ -429,7 +430,7 @@ int main(int argc, char** argv)
 
           pick(group);  //pick function
           ROS_INFO("Picked");
-          ros::WallDuration(10.0).sleep(); //give a moment to do things
+          ros::WallDuration(1.0).sleep(); //give a moment to do things
 
           place(group); //place function
           ROS_INFO("Placed");
