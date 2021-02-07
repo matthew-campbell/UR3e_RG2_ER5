@@ -12,6 +12,8 @@
 
   <xacro:include filename="$(find UR3e_RG2_ER5_description)/urdf/er5.urdf.xacro" />
 
+  <xacro:include filename="$(find UR3e_RG2_ER5_description)/urdf/kinect_camera.urdf.xacro"/>
+  <!-- <xacro:include filename="$(find UR3e_RG2_ER5_description)/urdf/camera.urdf.xacro"/>  -->
 
   <!-- arm -->
   <xacro:ur3e_robot prefix="" joint_limited="true"
@@ -36,14 +38,15 @@
   </joint>
 
   <joint name="ur3e_to_gripper" type="fixed">
-    <origin xyz="0 0 0.0" rpy="0 0 0"/>
+    <origin xyz="0 0 0.0" rpy="0 ${-pi/2} 0"/>
     <parent link="tool0"/>
     <parent link="wrist_3_link" />
-    <child link="gripper_extender_link"/>
+    <!--child link="gripper_extender_link"/-->
+    <child link="rg2_body_link"/>
   </joint>
 
   <link name="world" />
-
+  <xacro:camera_deep parent="world" prefix=""/>
   <joint name="world_joint" type="fixed">
     <parent link="world" />
     <child link = "er5_body_link" />

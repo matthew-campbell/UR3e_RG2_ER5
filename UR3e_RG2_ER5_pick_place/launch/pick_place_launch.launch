@@ -1,0 +1,7 @@
+<launch>
+  <include file="$(find UR3e_RG2_ER5_description)/launch/gazebo.launch"/>
+  <include file="$(find UR3e_RG2_ER5_moveit_config)/launch/UR3e_RG2_ER5_moveit_planning_execution.launch"/>
+  <include file="$(find UR3e_RG2_ER5_moveit_config)/launch/moveit_rviz.launch">
+    <arg name="config" value="true"/>
+    </include>
+</launch>
