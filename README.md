@@ -23,7 +23,7 @@ rosrun UR3e_RG2_ER5_pick_place pick_place
 
 Now, in a new tab spawn a sphere into gazebo and the pick and place function should carry through:
 ```
-rostopic pub /pick_place UR3e_RG2_ER5_pick_place/object_sphere '{name: "TEST1",pose: {position: {x: 0.4,y: 0,z: 0.75}, orientation:{x: 0.0, y: 0.0,z: 0.0,w: 0.0}},radius: 0.025}'
+rostopic pub -1 /pick_place UR3e_RG2_ER5_pick_place/object_sphere '{name: "TEST1",pose: {position: {x: 0.4,y: 0,z: 0.501}, orientation:{x: 0.0, y: 0.0,z: 0.0,w: 0.0}},radius: 0.025}'
 ```
 
 ### Known Issues
