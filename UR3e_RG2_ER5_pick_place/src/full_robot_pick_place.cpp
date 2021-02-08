@@ -390,7 +390,9 @@ int main(int argc, char** argv)
 
   moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
   moveit::planning_interface::MoveGroupInterface group("manipulator");
+
   group.setPlanningTime(5.0);
+
 
   addCollisionObjects_Tables(planning_scene_interface);  //add tables as collision objects
 
@@ -405,7 +407,8 @@ int main(int argc, char** argv)
       objectCheck = 0;  //reset for next object
       if (BndBox_Check(sphere_xyz)){
         if ((sphere_radius < 1.5)&&(sphere_radius > 0)){   //Checks that the radius doesn't exceed a maximum value
-          string origin_xyz = "0 0 0";  //Probably want to leave this alone unless wanting to change
+
+          string origin_xyz = "0 0 0";  //Probably want to leave this alone unless needing to change
           string sphere_urdf = "<robot name=\"sphere\"><link name=\"sphere\"><inertial><origin xyz=\"" + origin_xyz + "\" /><mass value=\"1.0\" /><inertia  ixx=\"1.0\" ixy=\"0.0\"  ixz=\"0.0\"  iyy=\"1.0\"  iyz=\"0.0\"  izz=\"1.0\" /></inertial><visual><origin xyz=\"" + origin_xyz + "\"/><geometry><sphere radius=\"" + to_string(sphere_radius) + "\" /></geometry></visual><collision><origin xyz=\"" + origin_xyz + "\"/><geometry><sphere radius=\"" + to_string(sphere_radius) + "\" /></geometry></collision></link><gazebo reference= \"sphere\"><material>Gazebo/Green</material></gazebo></robot>";
           ROS_INFO("%s", sphere_urdf.c_str());
 
